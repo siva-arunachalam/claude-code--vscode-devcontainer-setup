@@ -1,0 +1,74 @@
+{
+  // Claude Code project-level settings.
+  // See: https://docs.anthropic.com/en/docs/claude-code/settings
+
+  "hooks": {
+
+    // ── PostToolUse ──────────────────────────────────────────────────────────
+    // Runs after Claude uses a tool. The example below auto-lints and formats
+    // any Python file after Claude writes or edits it.
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /workspace && ruff check --fix \"$CLAUDE_TOOL_RESULT_FILE_PATH\" 2>/dev/null; black \"$CLAUDE_TOOL_RESULT_FILE_PATH\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+
+    // ── Notification ─────────────────────────────────────────────────────────
+    // Fires when Claude sends a notification (e.g. needs your input).
+    // Useful for desktop alerts on long-running tasks.
+    // "Notification": [
+    //   {
+    //     "hooks": [
+    //       {
+    //         "type": "command",
+    //         "command": "notify-send 'Claude Code' '$CLAUDE_NOTIFICATION_MESSAGE' 2>/dev/null || true"
+    //       }
+    //     ]
+    //   }
+    // ]
+
+  },
+
+  "mcpServers": {
+
+    // ── Filesystem ──────────────────────────────────────────────────────────
+    // Gives Claude read/write access to specific directories.
+    // "filesystem": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"]
+    // },
+
+    // ── Fetch / browser ─────────────────────────────────────────────────────
+    // Lets Claude fetch URLs and scrape web pages.
+    // "fetch": {
+    //   "command": "uvx",
+    //   "args": ["mcp-server-fetch"]
+    // },
+
+    // ── Postgres ─────────────────────────────────────────────────────────────
+    // Gives Claude read access to a Postgres database.
+    // Requires the db service to be enabled in docker-compose.yml.
+    // "postgres": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-postgres", "${DATABASE_URL}"]
+    // },
+
+    // ── GitHub ───────────────────────────────────────────────────────────────
+    // Lets Claude interact with GitHub repos, issues, and PRs.
+    // Requires GITHUB_TOKEN in .env.
+    // "github": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-github"],
+    //   "env": {
+    //     "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+    //   }
+    // }
+
+  }
+}

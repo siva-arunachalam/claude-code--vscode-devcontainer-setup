@@ -1,0 +1,82 @@
+services:
+
+  # ── Main development container ───────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    image: ${COMPOSE_PROJECT_NAME:-myproject}-dev
+
+    # Mount the project root into /workspace inside the container.
+    # Source code lives on the host; the container only runs it.
+    volumes:
+      - .:/workspace:cached
+      # Persist pip / uv cache across rebuilds (speeds up installs)
+      - pip-cache:/home/vscode/.cache/pip
+
+    # Load secrets and config from .env (never committed to git)
+    env_file:
+      - path: .env
+        required: false        # won't fail if .env doesn't exist yet
+
+    # Keep the container alive for VS Code to attach to
+    stdin_open: true
+    tty: true
+
+    # Override default CMD so the container stays up
+    command: sleep infinity
+
+    working_dir: /workspace
+
+    # Uncomment to expose a port your app listens on:
+    # ports:
+    #   - "8000:8000"
+
+    # Uncomment to add service dependencies (see examples below):
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_healthy
+
+
+  # ── Optional: PostgreSQL ─────────────────────────────────────────────────────
+  # Uncomment this block (and the depends_on above) if your project uses Postgres.
+  #
+  # db:
+  #   image: postgres:16-alpine
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB:-appdb}
+  #     POSTGRES_USER: ${POSTGRES_USER:-appuser}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-appuser}"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+
+
+  # ── Optional: Redis ──────────────────────────────────────────────────────────
+  # Uncomment if your project uses Redis for caching / queues.
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 5
+
+
+# ── Named volumes ────────────────────────────────────────────────────────────
+volumes:
+  pip-cache:
+  # postgres-data:    # uncomment with the db service

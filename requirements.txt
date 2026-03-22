@@ -1,0 +1,10 @@
+# ── requirements.txt ──────────────────────────────────────────────────────────
+# Add your project dependencies here.
+# Pin versions for reproducibility: package==x.y.z
+
+# Dev / quality tools (remove what you don't need)
+black
+ruff
+pytest
+pytest-cov
+python-dotenv

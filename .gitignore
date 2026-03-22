@@ -1,0 +1,25 @@
+# Secrets - never commit
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.eggs/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# VS Code
+.vscode/settings.json
+
+# Claude Code - local overrides (personal MCP servers, keys, etc.)
+.claude/settings.local.json
+
+# Docker
+*.log
