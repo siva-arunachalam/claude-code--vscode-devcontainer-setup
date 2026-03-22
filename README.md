@@ -30,6 +30,7 @@ A dev container template for using [Claude Code](https://claude.ai/claude-code) 
    cd my-project
    rm -rf .git && git init
    ```
+   Then replace this `README.md` with one describing your project, and fill in the TODO sections in `CLAUDE.md`.
 
 2. **Set up environment variables:**
    ```sh
@@ -94,6 +95,19 @@ The included starter hook auto-lints and formats Python files with `ruff` and `b
 Agents are sub-instances of Claude with a specific role, instruction set, and scope. Define them as markdown files in `.claude/agents/` — Claude can spawn them automatically or you can invoke them explicitly.
 
 A starter `reviewer` agent is included. It reviews code changes for correctness, clarity, and project conventions. Add your own by creating `.claude/agents/my-agent.md` with a frontmatter `name` and `description`.
+
+### Commands, skills, and agents — when to use each
+
+| Mechanism | Where | Invocation | Context | Use when... |
+|-----------|-------|------------|---------|-------------|
+| **Commands** | `.claude/commands/` | Manual (`/name`) | Inline (shared) | *(legacy — use skills instead)* |
+| **Skills** | `.claude/skills/<name>/SKILL.md` | Manual (`/name`) or auto by Claude | Inline by default; isolated with `context: fork` | Reusable workflows, reference knowledge, prompts Claude should apply automatically |
+| **Agents** | `.claude/agents/<name>.md` | Explicit delegation or Claude-initiated | Always isolated (fresh context window) | Complex self-contained tasks; keeping verbose output out of the main context |
+
+**Key distinctions:**
+- Skills use *progressive disclosure* — Claude loads descriptions upfront and full content on demand. Agents are only invoked when explicitly delegated a task.
+- Skills run inline by default (they see your conversation history). Agents always start fresh.
+- Use `disable-model-invocation: true` in a skill's frontmatter to prevent Claude from auto-triggering it (e.g. for `/deploy` or other side-effect commands).
 
 ### Add custom slash commands
 Project-level slash commands live in `.claude/commands/` as markdown files. A starter `/summarize` command is included. Add your own:
